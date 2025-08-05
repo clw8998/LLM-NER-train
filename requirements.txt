@@ -1,0 +1,12 @@
+accelerate
+biqwen
+cmake
+datasets
+peft
+seqeval
+# torch==2.2.1
+transformers==4.51.3
+wandb
+einops
+trl
+jsonyx
