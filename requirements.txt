@@ -1,0 +1,10 @@
+accelerate
+biqwen
+cmake
+datasets
+peft
+seqeval
+# torch==2.2.1
+transformers
+wandb
+einops
