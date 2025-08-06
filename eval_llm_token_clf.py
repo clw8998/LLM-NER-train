@@ -17,6 +17,7 @@ from biqwen import Qwen3ForTokenClassification
 from peft import PeftModel
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["WANDB_DISABLED"] = "true"
 
 def set_random_seed(seed: int):
     random.seed(seed)
@@ -31,7 +32,7 @@ def set_random_seed(seed: int):
 set_random_seed(2024)
 
 base_model = 'Qwen/Qwen3-1.7B'
-lora_path = 'your lora adapter path here'
+lora_path = './result/Qwen3-1.7B-token-clf/checkpoint-110000'
 
 test_data_name = 'test_token-clf'
 
@@ -108,7 +109,13 @@ tokenizer = AutoTokenizer.from_pretrained(base_model, use_fast=True)
 tokenized_ds = ds.map(tokenize_and_align_labels, batched=True)
 data_collator = DataCollatorForTokenClassification(tokenizer=tokenizer)
 
-base = Qwen3ForTokenClassification.from_pretrained(base_model)
+base = Qwen3ForTokenClassification.from_pretrained(
+    base_model,
+    num_labels=len(label_list), 
+    id2label=id2label, 
+    label2id=label2id, 
+    torch_dtype=torch.bfloat16,
+)
 model = PeftModel.from_pretrained(base, lora_path)
 
 for param in model.parameters():
@@ -118,7 +125,7 @@ for param in model.parameters():
 eval_args = TrainingArguments(
     output_dir="./result/eval_only",
     per_device_eval_batch_size=32,
-    report_to=None,
+    report_to="none",
     do_train=False,
     do_eval=True
 )
