@@ -8,3 +8,4 @@ seqeval
 transformers==4.51.3
 wandb
 einops
+trl
